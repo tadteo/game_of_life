@@ -1,12 +1,16 @@
-class ConwayGame:
+import random
+from game import Game
+
+class ConwayGame(Game):
     def __init__(self, width, height):
-        # Initialize the game grid
-        self.width = width
-        self.height = height
-        self.grid = [[False for _ in range(width)] for _ in range(height)]
+        super().__init__(width, height)
+        # Initialize with some random alive cells
+        for _ in range(int(width * height * 0.2)):  # 20% of the grid
+            x = random.randint(0, width - 1)
+            y = random.randint(0, height - 1)
+            self.grid[y][x] = True
 
     def update(self):
-        # Update the game state based on Conway's rules
         new_grid = [[False for _ in range(self.width)] for _ in range(self.height)]
         for y in range(self.height):
             for x in range(self.width):
@@ -14,7 +18,6 @@ class ConwayGame:
         self.grid = new_grid
 
     def _update_cell(self, x, y):
-        # Determine the new state of a cell based on Conway's rules
         live_neighbors = 0
         for i in range(-1, 2):
             for j in range(-1, 2):
@@ -23,7 +26,4 @@ class ConwayGame:
                         if self.grid[y + j][x + i]:
                             live_neighbors += 1
 
-        if self.grid[y][x]:
-            return live_neighbors == 2 or live_neighbors == 3
-        else:
-            return live_neighbors == 3
+        return self.grid[y][x] and live_neighbors in [2, 3] or not self.grid[y][x] and live_neighbors == 3
