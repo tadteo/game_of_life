@@ -1,5 +1,6 @@
 import random
 from game import Game
+from config import color_palette
 
 class ConwayGame(Game):
     def __init__(self, width, height):
@@ -18,12 +19,23 @@ class ConwayGame(Game):
         self.grid = new_grid
 
     def _update_cell(self, x, y):
+        # Initialize the count of live neighbors
         live_neighbors = 0
-        for i in range(-1, 2):
-            for j in range(-1, 2):
+        
+        # Check all surrounding cells (the neighbors)
+        for i in range(-1, 2):  # This will loop through -1, 0, 1
+            for j in range(-1, 2):  # This will also loop through -1, 0, 1
+                # Skip the check for the cell itself (when both i and j are 0)
                 if not (i == 0 and j == 0):
+                    # Check if the neighboring cell is within the grid boundaries
                     if (0 <= x + i < self.width) and (0 <= y + j < self.height):
+                        # If the neighbor is alive (True), increase the count
                         if self.grid[y + j][x + i]:
                             live_neighbors += 1
-
+        
+        # Apply Conway's Game of Life rules:
+        # 1. Any live cell with two or three live neighbors survives.
+        # 2. Any dead cell with three live neighbors becomes a live cell.
+        # 3. All other live cells die in the next generation. Similarly, all other dead cells stay dead.
+        # The method returns True if the cell should be alive in the next generation, and False otherwise.
         return self.grid[y][x] and live_neighbors in [2, 3] or not self.grid[y][x] and live_neighbors == 3
